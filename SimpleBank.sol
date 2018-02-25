@@ -1,5 +1,11 @@
 pragma solidity ^0.4.18;
 
+/*
+ * A simple banking contract
+ * Initializes with owner, anyone can deposit money but only account owner
+ * can withdraw money from the account. Also let the owner to check the balance.
+ */
+
 contract SimpleBank {
   struct Transaction {
     address fromAddress;
@@ -20,11 +26,15 @@ contract SimpleBank {
   }
 
   function withdraw(address _toAddress, uint _withdrawAmount) public {
+    require(msg.sender == owner && balance() >= _withdrawAmount);
+
     Transaction memory transaction = Transaction(owner, _toAddress, _withdrawAmount);
     transactions.push(transaction);
   }
 
   function balance() public view returns (uint) {
+    require(msg.sender == owner);
+
     uint paidIn = 0;
     uint paidOut = 0;
 
