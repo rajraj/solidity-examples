@@ -16,6 +16,11 @@ contract SimpleBank {
   address owner;
   Transaction[] transactions;
 
+  modifier onlyOwner() {
+    require(owner == msg.sender);
+    _;
+  }
+
   function SimpleBank() public {
     owner = msg.sender;
   }
@@ -25,16 +30,14 @@ contract SimpleBank {
     transactions.push(transaction);
   }
 
-  function withdraw(address _toAddress, uint _withdrawAmount) public {
-    require(msg.sender == owner && balance() >= _withdrawAmount);
+  function withdraw(address _toAddress, uint _withdrawAmount) public onlyOwner {
+    require(balance() >= _withdrawAmount);
 
     Transaction memory transaction = Transaction(owner, _toAddress, _withdrawAmount);
     transactions.push(transaction);
   }
 
   function balance() public view returns (uint) {
-    require(msg.sender == owner);
-
     uint paidIn = 0;
     uint paidOut = 0;
 
